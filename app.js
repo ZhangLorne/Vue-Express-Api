@@ -9,7 +9,7 @@ var index = require('./routes/index');
 var users = require('./routes/users');
 var mongoose =require('mongoose');
 var app = express();
-app.set('views', path.join(__dirname, 'views'));
+app.set('api', path.join(__dirname, 'api'));
 app.set('view engine', 'jade');
 app.use(logger('dev'));
 app.use(bodyParser.json());

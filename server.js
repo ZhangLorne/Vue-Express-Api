@@ -1,30 +1,60 @@
-var express = require('express');  // 用来引入express模块
-var app   = express();                 // express 实例对象
-var toUSD = require('./routes/toUSD');
-var foo = require('./routes/foo')
-app.use(foo(req, res, next));
-console.log(toUSD.toUSD(10))
+var express = require('express');
+var app = express();
+var bodyParser = require('body-parser');
+var morgan = require('morgan');
+var mongoose = require('mongoose');
+var config = require('./routes/config'); //读取配置文件config.js信息
+var Menu = require('./models/menu')
 
-app.set('port',process.env.PORT || 3000);
-// 设置端口为3000
+var port = process.env.PORT || 3000; // 设置启动端口
+var db=mongoose.connect(config.database); // 连接数据库
+var apiRoutes = express.Router();
 
-app.use(function (req, res, next) { console.log('Time:',
-    Date.now()); next();});
-app.use('/user/:id', function (req, res, next){
-    console.log('Request Type:', req.method);
-    next();});
+//用body parser 来解析post和url信息中的参数
+app.use(bodyParser.urlencoded({extended: false}));
+app.use(bodyParser.json());
 
-app.get('/',function  (req,res) {          //  设置首页的路由 用 '/' 表示
-    res.send('Ritsu Yan ')
-})
-app.get('/about',function  (req,res) {    //设置about页面的路由 用 '/about' 表示
-    res.send('the node course')
-})
+// 使用 morgan 将请求日志打印到控制台
+app.use(morgan('dev'));
 
-app.use(function  (req,res,next) {         // 设置404页面
-    res.status(404);
-    res.send('404 - Not Found')
+// =======================
+// 路由 ================
+// =======================
+// 基础路由
+
+app.get('/', function(req, res) {
+    res.send('Hello! The API is at http://localhost:' + port + '/api');
+});
+apiRoutes.get('/menu/get',function (req,res) {
+    Menu.find({}, function(err, users) {
+        res.json(users);
+    });
 })
-app.listen(app.get('port'),function  () {      // 监听端口如果有用户进入页面发送请求我们输出以下语句
-    console.log('express started on port 3000')
-})
+// 插入数据
+// app.get('/menu', function(req, res) {
+//     var testSchema = new mongoose.Schema({
+//         icon:{type:String},
+//         text:{type:String},
+//     })
+//     var TestModal = db.model("test1",testSchema);
+//     // 创建一个测试用户
+//     var zhangguolong = new TestModal({
+//         icon: 'zhangguolong',
+//         text: '15',
+//     });
+//
+//     // 将测试用户保存到数据库
+//     zhangguolong.save(function(err) {
+//         if (err) throw err;
+//         console.log('User saved successfully');
+//         res.json({ success: true });
+//     });
+// });
+// API 路由 -------------------
+// 待会儿再添加
+
+// =======================
+// 启动服务 ======
+// =======================
+app.use('/api', apiRoutes);
+app.listen(port);
