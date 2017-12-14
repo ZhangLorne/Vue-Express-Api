@@ -15,5 +15,26 @@ class User {
             res.json({success:true});
         })
     }
+    removeUser(req,res,next){
+        var conditions = {_id:req.body.id};
+        UserModel.remove(conditions, function (error) {
+            if (error) {
+                console.error(error);
+            } else {
+                console.error("用户删除成功")
+            }
+        });
+    }
+    updateUser(req,res,next){
+        var conditions = req.body.id;
+        var updates = req.body;
+        UserModel.update(conditions, updates,function (error) {
+            if (error) {
+                console.error(error);
+            } else {
+                console.error("更新用户名成功")
+            }
+        });
+    }
 }
 module.exports = new User()
