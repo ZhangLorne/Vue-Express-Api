@@ -27,3 +27,4 @@ app.all('*', (req, res, next) => {
 });
 routes(app);
 app.listen(port);
+app.use(express.static('./public/uploads'))

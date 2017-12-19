@@ -1,4 +1,6 @@
 var DailyModel = require('../models/daily');
+var fs=require('fs');
+var http=require('http')
 class Daily {
     constructor(){
 
